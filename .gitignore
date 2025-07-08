@@ -1,0 +1,14 @@
+# General
+node_modules/
+.env
+.DS_Store
+dist/
+.vscode/
+*.log
+
+# Client specific
+client/dist
+client/.env
+
+# Server specific
+server/uploads
