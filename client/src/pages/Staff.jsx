@@ -9,7 +9,9 @@ import {
   Grid,
   Card,
   CardContent,
-  Avatar
+  Avatar,
+  useMediaQuery,
+  useTheme
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import BadgeIcon from '@mui/icons-material/Badge';
@@ -18,6 +20,8 @@ export default function Staff() {
   const [staffMembers, setStaffMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     const fetchStaff = async () => {
@@ -41,9 +45,11 @@ export default function Staff() {
     <Container maxWidth="xl" sx={{ py: 3 }}>
       <Box sx={{ 
         display: 'flex', 
+        flexDirection: isMobile ? 'column' : 'row',
         justifyContent: 'space-between', 
-        alignItems: 'center', 
-        mb: 3 
+        alignItems: isMobile ? 'flex-start' : 'center', 
+        mb: 3,
+        gap: isMobile ? 2 : 0
       }}>
         <Typography variant="h5" sx={{ fontWeight: 700, color: '#323c42' }}>
           Staff Management
@@ -77,15 +83,26 @@ export default function Staff() {
       ) : (
         <Grid container spacing={3}>
           {staffMembers.map(staff => (
-            <Grid item xs={12} sm={6} md={4} key={staff._id}>
-              <Card sx={{ bgcolor: '#ffffff', borderRadius: 2, boxShadow: 2 }}>
+            <Grid item xs={12} key={staff._id}>
+              <Card sx={{ 
+                bgcolor: '#ffffff', 
+                borderRadius: 2, 
+                boxShadow: 2 
+              }}>
                 <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    mb: 2,
+                    flexDirection: isMobile ? 'column' : 'row',
+                    textAlign: isMobile ? 'center' : 'left'
+                  }}>
                     <Avatar sx={{ 
                       bgcolor: '#e9c4d6', 
                       width: 56, 
                       height: 56,
-                      mr: 2,
+                      mr: isMobile ? 0 : 2,
+                      mb: isMobile ? 2 : 0,
                       color: '#323c42'
                     }}>
                       <BadgeIcon fontSize="large" />
@@ -103,6 +120,8 @@ export default function Staff() {
                   <Box sx={{ 
                     display: 'flex', 
                     justifyContent: 'space-between',
+                    flexDirection: isMobile ? 'column' : 'row',
+                    gap: isMobile ? 2 : 0,
                     mt: 2,
                     p: 2,
                     bgcolor: '#f8f9fa',
@@ -126,10 +145,15 @@ export default function Staff() {
                     </Box>
                   </Box>
                   
-                  <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    gap: 1, 
+                    mt: 2,
+                    flexDirection: isMobile ? 'column' : 'row'
+                  }}>
                     <Button 
                       variant="outlined" 
-                      fullWidth
+                      fullWidth={isMobile}
                       sx={{ 
                         borderColor: '#323c42', 
                         color: '#323c42',
@@ -140,7 +164,7 @@ export default function Staff() {
                     </Button>
                     <Button 
                       variant="outlined" 
-                      fullWidth
+                      fullWidth={isMobile}
                       sx={{ 
                         borderColor: '#d32f2f', 
                         color: '#d32f2f',

@@ -12,7 +12,9 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Paper
+  Paper,
+  useMediaQuery,
+  useTheme
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
@@ -20,6 +22,8 @@ export default function Guests() {
   const [guests, setGuests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     const fetchGuests = async () => {
@@ -43,9 +47,11 @@ export default function Guests() {
     <Container maxWidth="xl" sx={{ py: 3 }}>
       <Box sx={{ 
         display: 'flex', 
+        flexDirection: isMobile ? 'column' : 'row',
         justifyContent: 'space-between', 
-        alignItems: 'center', 
-        mb: 3 
+        alignItems: isMobile ? 'flex-start' : 'center', 
+        mb: 3,
+        gap: isMobile ? 2 : 0
       }}>
         <Typography variant="h5" sx={{ fontWeight: 700, color: '#323c42' }}>
           Guest Management
@@ -77,14 +83,25 @@ export default function Guests() {
           No guests found
         </Typography>
       ) : (
-        <TableContainer component={Paper} sx={{ borderRadius: 2, overflow: 'hidden' }}>
-          <Table>
+        <TableContainer 
+          component={Paper} 
+          sx={{ 
+            borderRadius: 2, 
+            overflow: 'auto',
+            maxHeight: 'calc(100vh - 200px)'
+          }}
+        >
+          <Table stickyHeader>
             <TableHead>
               <TableRow sx={{ bgcolor: '#f5f7fa' }}>
                 <TableCell sx={{ color: '#6d8791', fontWeight: 600 }}>Name</TableCell>
                 <TableCell sx={{ color: '#6d8791', fontWeight: 600 }}>Email</TableCell>
-                <TableCell sx={{ color: '#6d8791', fontWeight: 600 }}>Phone</TableCell>
-                <TableCell sx={{ color: '#6d8791', fontWeight: 600 }}>Last Stay</TableCell>
+                {!isMobile && (
+                  <>
+                    <TableCell sx={{ color: '#6d8791', fontWeight: 600 }}>Phone</TableCell>
+                    <TableCell sx={{ color: '#6d8791', fontWeight: 600 }}>Last Stay</TableCell>
+                  </>
+                )}
                 <TableCell sx={{ color: '#6d8791', fontWeight: 600 }}>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -97,18 +114,28 @@ export default function Guests() {
                   <TableCell>
                     <Typography variant="body2" color="#323c42">{guest.email}</Typography>
                   </TableCell>
+                  {!isMobile && (
+                    <>
+                      <TableCell>
+                        <Typography variant="body2" color="#323c42">{guest.phone || 'N/A'}</Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2" color="#323c42">
+                          {guest.lastStay ? new Date(guest.lastStay).toLocaleDateString() : 'Never'}
+                        </Typography>
+                      </TableCell>
+                    </>
+                  )}
                   <TableCell>
-                    <Typography variant="body2" color="#323c42">{guest.phone || 'N/A'}</Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2" color="#323c42">
-                      {guest.lastStay ? new Date(guest.lastStay).toLocaleDateString() : 'Never'}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Button sx={{ color: '#323c42', mr: 1 }}>View</Button>
-                    <Button sx={{ color: '#323c42', mr: 1 }}>Edit</Button>
-                    <Button sx={{ color: '#d32f2f' }}>Delete</Button>
+                    <Box sx={{ 
+                      display: 'flex', 
+                      flexDirection: isMobile ? 'column' : 'row',
+                      gap: isMobile ? 1 : 0
+                    }}>
+                      <Button sx={{ color: '#323c42' }}>View</Button>
+                      <Button sx={{ color: '#323c42' }}>Edit</Button>
+                      <Button sx={{ color: '#d32f2f' }}>Delete</Button>
+                    </Box>
                   </TableCell>
                 </TableRow>
               ))}

@@ -132,7 +132,7 @@ export default function Dashboard() {
             <Grid item xs={12} sm={6} md={3}>
               <StatCard 
                 title="Revenue" 
-                value={`$${stats.revenue.toLocaleString()}`} 
+                value={`ksh${stats.revenue.toLocaleString()}`} 
                 icon={<MonetizationOnIcon sx={{ color: '#323c42' }} />}
               />
             </Grid>

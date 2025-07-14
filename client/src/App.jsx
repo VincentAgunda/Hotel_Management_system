@@ -1,75 +1,76 @@
-import { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+// src/App.jsx
+import React, { useState } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { Box, Container } from '@mui/material';
-import Dashboard from './pages/Dashboard.jsx';
-import Rooms from './pages/Rooms/index.jsx';
-import Bookings from './pages/Bookings/index.jsx';
-import Guests from './pages/Guests.jsx';
-import Staff from './pages/Staff.jsx';
-import Login from './pages/Login.jsx';
-import Navbar from './components/layout/Navbar.jsx';
-import Sidebar from './components/layout/Sidebar.jsx';
-import RoomDetail from './pages/Rooms/RoomDetail.jsx';
-import BookingDetail from './pages/Bookings/BookingDetail.jsx';
 
-// Custom theme with your color palette
+// Layouts
+import AdminLayout from './components/layout/AdminLayout';
+import GuestLayout from './components/layout/GuestLayout';
+
+// Guest pages
+import GuestHomepage from './pages/guest/GuestHomepage';
+import RoomDetail from './pages/guest/RoomDetail';
+import BookingForm from './pages/guest/BookingForm';
+
+// Admin pages
+import Dashboard from './pages/Dashboard';
+import AdminRooms from './pages/Rooms';
+import AdminBookings from './pages/Bookings';
+import AdminGuests from './pages/Guests';
+import AdminStaff from './pages/Staff';
+import AdminRoomDetail from './pages/Rooms/RoomDetail';
+import AdminBookingDetail from './pages/Bookings/BookingDetail';
+
+// Auth
+import Login from './pages/Login';
+
+// Custom theme
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#323c42', // Dark blue-gray
-      light: '#6d8791', // Medium blue-gray
-      contrastText: '#ede6e6' // Light beige
+      main: '#323c42',
+      contrastText: '#ffffff'
     },
     secondary: {
-      main: '#e9c4d6', // Light pink
+      main: '#e9c4d6',
       contrastText: '#323c42'
     },
     background: {
-      default: '#ede6e6', // Light beige
-      paper: '#ffffff'
-    },
-    text: {
-      primary: '#323c42', // Dark blue-gray
-      secondary: '#6d8791' // Medium blue-gray
+      default: '#f8f9fa'
     }
   },
   typography: {
     fontFamily: "'Inter', sans-serif",
-    h5: {
+    h1: {
       fontWeight: 700,
-      color: '#323c42'
+      fontSize: '2.5rem'
     },
-    h6: {
+    h2: {
       fontWeight: 600,
-      color: '#323c42'
+      fontSize: '2rem'
+    },
+    h3: {
+      fontWeight: 600,
+      fontSize: '1.5rem'
+    },
+    h4: {
+      fontWeight: 600,
+      fontSize: '1.25rem'
     },
     body1: {
-      color: '#323c42'
+      fontSize: '1rem'
     }
   },
   components: {
-    MuiAppBar: {
-      styleOverrides: {
-        root: {
-          backgroundColor: '#ede6e6',
-          color: '#323c42',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-        },
-      },
-    },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          borderRadius: 12,
-          boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-          backgroundColor: '#ffffff',
-        },
-      },
-    },
     MuiButton: {
       styleOverrides: {
+        root: {
+          textTransform: 'none',
+          fontWeight: 600,
+          borderRadius: '8px',
+          padding: '10px 20px'
+        },
         containedPrimary: {
           backgroundColor: '#323c42',
           '&:hover': {
@@ -85,55 +86,69 @@ const theme = createTheme({
         }
       }
     },
-    MuiListItemButton: {
+    MuiCard: {
       styleOverrides: {
         root: {
+          borderRadius: '12px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+          transition: 'transform 0.3s ease, box-shadow 0.3s ease',
           '&:hover': {
-            backgroundColor: '#6d879120 !important',
+            transform: 'translateY(-5px)',
+            boxShadow: '0 6px 16px rgba(0,0,0,0.1)'
           }
         }
       }
     }
-  },
+  }
 });
 
-function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+// Mock authentication context (still available but not enforced)
+const AuthContext = React.createContext();
 
+function App() {
+  const [user, setUser] = useState(null);
+  
+  const login = (userData) => {
+    setUser(userData);
+  };
+  
+  const logout = () => {
+    setUser(null);
+  };
+  
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
-        <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
-        
-        <Box 
-          component="main" 
-          sx={{ 
-            flexGrow: 1, 
-            p: 3,
-            transition: 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms',
-            marginLeft: sidebarOpen ? '240px' : '0px',
-            width: sidebarOpen ? 'calc(100% - 240px)' : '100%',
-            bgcolor: 'background.default'
-          }}
-        >
-          <Container maxWidth="xl" sx={{ py: 3 }}>
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/rooms" element={<Rooms />} />
-              <Route path="/rooms/:id" element={<RoomDetail />} />
-              <Route path="/bookings" element={<Bookings />} />
-              <Route path="/bookings/:id" element={<BookingDetail />} />
-              <Route path="/guests" element={<Guests />} />
-              <Route path="/staff" element={<Staff />} />
-              <Route path="/login" element={<Login />} />
-            </Routes>
-          </Container>
-        </Box>
-      </Box>
-    </ThemeProvider>
+    <AuthContext.Provider value={{ user, login, logout }}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Routes>
+          {/* Guest routes */}
+          <Route element={<GuestLayout />}>
+            <Route path="/" element={<GuestHomepage />} />
+            <Route path="/rooms/:id" element={<RoomDetail />} />
+            <Route path="/book/:roomId" element={<BookingForm />} />
+          </Route>
+          
+          {/* Login */}
+          <Route path="/login" element={<Login />} />
+          
+          {/* Admin routes - now accessible without authentication */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="rooms" element={<AdminRooms />} />
+            <Route path="rooms/:id" element={<AdminRoomDetail />} />
+            <Route path="bookings" element={<AdminBookings />} />
+            <Route path="bookings/:id" element={<AdminBookingDetail />} />
+            <Route path="guests" element={<AdminGuests />} />
+            <Route path="staff" element={<AdminStaff />} />
+          </Route>
+          
+          {/* Redirect to home for unknown routes */}
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </ThemeProvider>
+    </AuthContext.Provider>
   );
 }
 
 export default App;
+export { AuthContext };
