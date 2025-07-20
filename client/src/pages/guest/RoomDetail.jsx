@@ -12,94 +12,47 @@ import {
   Stack,
   Chip
 } from '@mui/material';
-import BedIcon from '@mui/icons-material/Bed';
-import BathtubIcon from '@mui/icons-material/Bathtub';
-import WifiIcon from '@mui/icons-material/Wifi';
-import AcUnitIcon from '@mui/icons-material/AcUnit';
-import PoolIcon from '@mui/icons-material/Pool';
-import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import {
+  mockRooms,
+  formatKES,
+  features
+} from '../../data/hotelData';
 
-// --- DATA ---
-const mockRooms = [
-  {
-    id: '101',
-    type: 'Deluxe',
-    description: 'Spacious room with king-size bed and city view.',
-    price: 25870, // 199 * 130
-    amenities: ['WiFi', 'TV', 'AC', 'Mini Bar', 'Safe'],
-    image: '/deluxe-room.jpg',
-    size: '450 sq ft',
-    beds: '1 King Bed',
-    maxGuests: 2,
-    details: 'Our Deluxe Rooms offer a perfect blend of comfort and style. Featuring floor-to-ceiling windows with stunning city views, a plush king-size bed with premium linens, and a spacious marble bathroom with a rainfall shower.',
-    images: ['/deluxe-room-1.jpg', '/deluxe-room-2.jpg', '/deluxe-room-3.jpg', '/deluxe-bathroom.jpg'],
-    rating: 4.7,
-    reviews: 128,
-  },
-  {
-    id: '102',
-    type: 'Suite',
-    description: 'Luxurious suite with a separate living area and jacuzzi.',
-    price: 38870, // 299 * 130
-    amenities: ['WiFi', 'TV', 'AC', 'Mini Bar', 'Safe', 'Hairdryer', 'Balcony'],
-    image: '/suite-room.jpg',
-    size: '800 sq ft',
-    beds: '1 King Bed',
-    maxGuests: 3,
-    details: 'Experience ultimate luxury in our spacious suites featuring a separate living area, dining space, and a private balcony. The bedroom features a king-size bed, and the luxurious bathroom includes a deep soaking tub.',
-    images: ['/suite-room-1.jpg', '/suite-room-2.jpg', '/suite-room-3.jpg', '/suite-bathroom.jpg'],
-    rating: 4.9,
-    reviews: 94,
-  }
-];
-
-// --- UTILITY FUNCTION ---
-const formatKES = (amount) => {
-  return new Intl.NumberFormat('en-KE', {
-    style: 'currency',
-    currency: 'KES',
-    maximumFractionDigits: 0
-  }).format(amount);
-};
-
-// --- SUB-COMPONENTS ---
 const RoomGallery = ({ room }) => (
   <>
+    {/* Main image - Reduced height and potentially max-height for responsiveness */}
     <CardMedia
       component="img"
-      height="500"
+      height="300" // **Reduced height from 500 to 300**
+      // You could also use maxHeight for responsiveness, e.g., sx={{ maxHeight: { xs: 200, sm: 300, md: 400 }, borderRadius: 3, objectFit: 'cover' }}
       image={room.image}
       alt={room.type}
-      sx={{ borderRadius: 3, objectFit: 'cover' }}
+      sx={{ borderRadius: 3, objectFit: 'cover', width: '100%' }} // Added width: '100%' for good measure
     />
-    <Box sx={{ mt: 2, display: 'flex', gap: 2, overflowX: 'auto', pb: 2 }}>
-      {room.images.map((img, index) => (
-        <CardMedia
-          key={index}
-          component="img"
-          height="100"
-          image={img}
-          alt={`Room view ${index + 1}`}
-          sx={{
-            width: 150,
-            borderRadius: 2,
-            cursor: 'pointer',
-            '&:hover': { opacity: 0.8 }
-          }}
-        />
-      ))}
+    {/* Gallery of smaller images */}
+    <Box sx={{ mt: 2, overflowX: 'hidden', pb: 2 }}> {/* Changed overflowX to 'hidden' */}
+      <Grid container spacing={1}>
+        {room.images.map((img, index) => (
+          <Grid item xs={12} sm={6} md={4} lg={2.4} key={index}>
+            <CardMedia
+              component="img"
+              height="100"
+              image={img}
+              alt={`Room view ${index + 1}`}
+              sx={{
+                width: '100%',
+                borderRadius: 2,
+                cursor: 'pointer',
+                objectFit: 'cover',
+                '&:hover': { opacity: 0.8 }
+              }}
+            />
+          </Grid>
+        ))}
+      </Grid>
     </Box>
   </>
 );
-
-const features = [
-  { icon: <BedIcon color="primary" sx={{ mr: 1 }} />, label: (room) => room.beds },
-  { icon: <BathtubIcon color="primary" sx={{ mr: 1 }} />, label: () => 'Marble bathroom' },
-  { icon: <WifiIcon color="primary" sx={{ mr: 1 }} />, label: () => 'Free WiFi' },
-  { icon: <AcUnitIcon color="primary" sx={{ mr: 1 }} />, label: () => 'Climate control' },
-  { icon: <PoolIcon color="primary" sx={{ mr: 1 }} />, label: () => 'Pool access' },
-  { icon: <FitnessCenterIcon color="primary" sx={{ mr: 1 }} />, label: () => 'Gym access' },
-];
 
 const BookingCard = ({ room }) => (
   <Box sx={{ position: 'sticky', top: 100, p: 3, border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
@@ -107,7 +60,7 @@ const BookingCard = ({ room }) => (
       {formatKES(room.price)}
       <Typography component="span" variant="body1" color="text.secondary"> / night</Typography>
     </Typography>
-    
+
     <Box sx={{ display: 'flex', alignItems: 'center', my: 2 }}>
       <Rating value={room.rating} precision={0.1} readOnly sx={{ mr: 1 }} />
       <Typography variant="body2" color="text.secondary">
@@ -120,12 +73,15 @@ const BookingCard = ({ room }) => (
     </Typography>
 
     <Grid container spacing={2} sx={{ mb: 3 }}>
-      {features.map((feature, index) => (
-        <Grid item xs={6} key={index} sx={{ display: 'flex', alignItems: 'center' }}>
-          {feature.icon}
-          <Typography variant="body2">{feature.label(room)}</Typography>
-        </Grid>
-      ))}
+      {features.map((feature, index) => {
+        const Icon = feature.icon;
+        return (
+          <Grid item xs={6} key={index} sx={{ display: 'flex', alignItems: 'center' }}>
+            <Icon color={feature.color} sx={{ mr: 1 }} />
+            <Typography variant="body2">{feature.label(room)}</Typography>
+          </Grid>
+        );
+      })}
     </Grid>
 
     <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mb: 3 }}>
@@ -140,8 +96,6 @@ const BookingCard = ({ room }) => (
   </Box>
 );
 
-
-// --- MAIN PAGE COMPONENT ---
 const RoomDetail = () => {
   const { id } = useParams();
   const room = mockRooms.find(r => r.id === id);
@@ -155,14 +109,14 @@ const RoomDetail = () => {
         </Button>
       </Container>
     );
-  }
+    }
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
       <Typography variant="h3" component="h1" sx={{ fontWeight: 700, mb: 1 }}>
         {room.type} Room
       </Typography>
-      
+
       <Button component={Link} to="/" variant="text" sx={{ mb: 3 }}>
         &larr; Back to all rooms
       </Button>

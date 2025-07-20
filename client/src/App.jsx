@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -102,7 +101,7 @@ const theme = createTheme({
   }
 });
 
-// Mock authentication context (still available but not enforced)
+// Mock authentication context
 const AuthContext = React.createContext();
 
 function App() {
@@ -125,13 +124,14 @@ function App() {
           <Route element={<GuestLayout />}>
             <Route path="/" element={<GuestHomepage />} />
             <Route path="/rooms/:id" element={<RoomDetail />} />
-            <Route path="/book/:roomId" element={<BookingForm />} />
+            {/* Fixed route parameter to match links */}
+            <Route path="/book/:id" element={<BookingForm />} />
           </Route>
           
           {/* Login */}
           <Route path="/login" element={<Login />} />
           
-          {/* Admin routes - now accessible without authentication */}
+          {/* Admin routes */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="rooms" element={<AdminRooms />} />
