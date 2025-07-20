@@ -17,7 +17,7 @@ export const mockRooms = [
     beds: '1 King Bed',
     maxGuests: 2,
     details: 'Our Deluxe Rooms offer a perfect blend of comfort and style. Featuring floor-to-ceiling windows with stunning city views, a plush king-size bed with premium linens, and a spacious marble bathroom with a rainfall shower.',
-    images: ['/deluxe-room-1.jpg', '/deluxe-room-2.jpg', '/deluxe-room-3.jpg', '/deluxe-bathroom.jpg'],
+    images: ['/deluxe-room.jpg', '/deluxe-room.jpg', '/deluxe-room.jpg', '/deluxe-room.jpg'],
     rating: 4.7,
     reviews: 128,
   },
@@ -152,7 +152,7 @@ export const mockRooms = [
     beds: '1 King Bed',
     maxGuests: 4,
     details: 'Our crown jewel, the Penthouse offers unparalleled luxury with 360-degree city views, a private jacuzzi on the terrace, gourmet kitchen, and personalized butler service. Includes access to exclusive amenities.',
-    images: ['/penthouse-1.jpg', '/penthouse-2.jpg', '/penthouse-3.jpg', '/penthouse-terrace.jpg'],
+    images: ['/deluxe-room.jpg', '/deluxe-room.jpg', '/deluxe-room.jpg', '/deluxe-room.jpg'],
     rating: 4.97,
     reviews: 42,
   }

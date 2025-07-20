@@ -10,8 +10,11 @@ import {
   CardMedia,
   Rating,
   Stack,
-  Chip
+  Chip,
+  IconButton,
+  Tooltip
 } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import {
   mockRooms,
   formatKES,
@@ -20,42 +23,60 @@ import {
 
 const RoomGallery = ({ room }) => (
   <>
-    {/* Main image - Reduced height and potentially max-height for responsiveness */}
     <CardMedia
       component="img"
-      height="300" // **Reduced height from 500 to 300**
-      // You could also use maxHeight for responsiveness, e.g., sx={{ maxHeight: { xs: 200, sm: 300, md: 400 }, borderRadius: 3, objectFit: 'cover' }}
+      height="400"
       image={room.image}
       alt={room.type}
-      sx={{ borderRadius: 3, objectFit: 'cover', width: '100%' }} // Added width: '100%' for good measure
+      sx={{ borderRadius: 3, objectFit: 'cover', width: '100%', mb: 2 }}
     />
-    {/* Gallery of smaller images */}
-    <Box sx={{ mt: 2, overflowX: 'hidden', pb: 2 }}> {/* Changed overflowX to 'hidden' */}
-      <Grid container spacing={1}>
-        {room.images.map((img, index) => (
-          <Grid item xs={12} sm={6} md={4} lg={2.4} key={index}>
-            <CardMedia
-              component="img"
-              height="100"
-              image={img}
-              alt={`Room view ${index + 1}`}
-              sx={{
-                width: '100%',
-                borderRadius: 2,
-                cursor: 'pointer',
-                objectFit: 'cover',
-                '&:hover': { opacity: 0.8 }
-              }}
-            />
-          </Grid>
-        ))}
-      </Grid>
+
+    <Typography variant="h6" sx={{ mb: 1 }}>
+      More Photos
+    </Typography>
+
+    <Box
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(5, 1fr)',
+        gap: 1,
+        pb: 2
+      }}
+    >
+      {room.images.map((img, index) => (
+        <CardMedia
+          key={index}
+          component="img"
+          image={img}
+          alt={`Room view ${index + 1}`}
+          sx={{
+            width: '100%',
+            height: 100,
+            borderRadius: 2,
+            cursor: 'pointer',
+            objectFit: 'cover',
+            transition: '0.3s',
+            '&:hover': { opacity: 0.85 }
+          }}
+        />
+      ))}
     </Box>
   </>
 );
 
 const BookingCard = ({ room }) => (
-  <Box sx={{ position: 'sticky', top: 100, p: 3, border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
+  <Box
+    sx={{
+      position: 'sticky',
+      top: 100,
+      p: 3,
+      border: '1px solid',
+      borderColor: 'divider',
+      borderRadius: 3,
+      bgcolor: 'background.paper',
+      boxShadow: 2
+    }}
+  >
     <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>
       {formatKES(room.price)}
       <Typography component="span" variant="body1" color="text.secondary"> / night</Typography>
@@ -68,7 +89,9 @@ const BookingCard = ({ room }) => (
       </Typography>
     </Box>
 
-    <Typography variant="body1" sx={{ mb: 3 }}>
+    <Divider sx={{ my: 2 }} />
+
+    <Typography variant="body1" sx={{ mb: 2 }}>
       {room.description}
     </Typography>
 
@@ -77,7 +100,9 @@ const BookingCard = ({ room }) => (
         const Icon = feature.icon;
         return (
           <Grid item xs={6} key={index} sx={{ display: 'flex', alignItems: 'center' }}>
-            <Icon color={feature.color} sx={{ mr: 1 }} />
+            <Tooltip title={feature.label(room)}>
+              <Icon color={feature.color} sx={{ mr: 1 }} />
+            </Tooltip>
             <Typography variant="body2">{feature.label(room)}</Typography>
           </Grid>
         );
@@ -90,7 +115,14 @@ const BookingCard = ({ room }) => (
       ))}
     </Stack>
 
-    <Button component={Link} to={`/book/${room.id}`} variant="contained" fullWidth size="large">
+    <Button
+      component={Link}
+      to={`/book/${room.id}`}
+      variant="contained"
+      fullWidth
+      size="large"
+      sx={{ mt: 2 }}
+    >
       Book Now
     </Button>
   </Box>
@@ -109,24 +141,29 @@ const RoomDetail = () => {
         </Button>
       </Container>
     );
-    }
+  }
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
-      <Typography variant="h3" component="h1" sx={{ fontWeight: 700, mb: 1 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+        <IconButton component={Link} to="/" sx={{ mr: 1 }}>
+          <ArrowBackIcon />
+        </IconButton>
+        <Typography variant="h5" sx={{ fontWeight: 500 }}>
+          Back to All Rooms
+        </Typography>
+      </Box>
+
+      <Typography variant="h3" component="h1" sx={{ fontWeight: 700, mb: 2 }}>
         {room.type} Room
       </Typography>
-
-      <Button component={Link} to="/" variant="text" sx={{ mb: 3 }}>
-        &larr; Back to all rooms
-      </Button>
 
       <Grid container spacing={5}>
         <Grid item xs={12} md={7}>
           <RoomGallery room={room} />
           <Divider sx={{ my: 4 }} />
           <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>
-            About this room
+            About This Room
           </Typography>
           <Typography variant="body1" sx={{ color: 'text.secondary', whiteSpace: 'pre-line' }}>
             {room.details}
